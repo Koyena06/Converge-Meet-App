@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,14 +10,7 @@
 
     </head>
     <body>
-        <div class="navbar">
-            <div class="logo">Converge</div>
-
-            <div class="nav-links">
-                <a href="auth/login.php">Login</a>
-                <a href="auth/register.php">Register</a>
-            </div>
-        </div>
+        <?php include("includes/header.php"); ?>
         <div class="hero">
 
             <h1>Find Friends With Similar Interests</h1>
@@ -31,9 +25,7 @@
             <a href="auth/login.php" class="btn btn-secondary">Login</a>
 
         </div>
-        <div class="footer">
-            <p>Converge-Meetup App &#169; 2026</p>
-        </div>
+        <?php include("includes/footer.php"); ?>
 
     </body>
 </html>
