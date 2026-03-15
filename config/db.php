@@ -2,7 +2,7 @@
     $host="localhost";
     $user="root";
     $password="";
-    $database="meetup_app";
+    $database="meetup_db";
 
     //create connection 
     $conn=new mysqli($host, $user, $password, $database);
