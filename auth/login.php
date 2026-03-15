@@ -15,7 +15,7 @@
                  $_SESSION["user_id"]=$user["id"];
                  $_SESSION["name"]=$user["name"];
 
-                 header("Location: ../user/dashboarsd.php");
+                 header("Location: ../user/dashboard.php");
             }
             else{
                 echo "Incorrect Password";
