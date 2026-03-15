@@ -7,7 +7,11 @@ if(session_status() === PHP_SESSION_NONE){
 <div class="navbar">
 
     <div class="logo">
+<<<<<<< HEAD
         <a href="index.php">Converge</a>
+=======
+        <a href="/meetup-app/index.php">Converge</a>
+>>>>>>> 52d7d0cbbda7cb36892800d0cf8cea0792a7675d
     </div>
 
     <div class="nav-links">
