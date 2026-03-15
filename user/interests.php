@@ -31,7 +31,7 @@
     
         <div class="navbar">
         
-            <div class="logo">Meetup</div>
+            <div class="logo">Converge</div>
         
             <div class="nav-links">
                 <a href="dashboard.php">Dashboard</a>
