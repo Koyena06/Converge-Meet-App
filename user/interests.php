@@ -20,16 +20,62 @@
     $result=$conn->query("SELECT * FROM interests");
 ?> 
 
-<form method="POST">
-
-<select name="interest">
-<?php
-    while($row=$result->fetch_assoc()){
-        echo "<option value='".$row['id']."'>".$row['interest_name']."</option>";
-    }
-?>
-</select>
-<button type="submit">Add Interest</button>
-
-</form>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Select Interests</title>
+        <link rel="stylesheet" href="../assets/css/style.css">
+    </head>
+    
+    <body>
+    
+        <div class="navbar">
+        
+            <div class="logo">Meetup</div>
+        
+            <div class="nav-links">
+                <a href="dashboard.php">Dashboard</a>
+                <a href="profile.php">Profile</a>
+                <a href="../auth/logout.php">Logout</a>
+            </div>
+        
+        </div>
+        
+        
+        <div class="form-container">
+        
+            <h2>Select Your Interests</h2>
+        
+            <?php
+            if(isset($message)){
+                echo "<p>".$message."</p>";
+            }
+            ?>
+        
+            <form method="POST">
+            
+                <div class="form-group">
+                
+                    <label>Choose Interest</label>
+                
+                    <select name="interest">
+                
+                        <?php
+                        while($row=$result->fetch_assoc()){
+                            echo "<option value='".$row['id']."'>".$row['interest_name']."</option>";
+                        }
+                        ?>
+                
+                    </select>
+                
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Add Interest</button>
+            
+            </form>
+        
+        </div>
+    
+    </body>
+</html>
 
