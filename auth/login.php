@@ -27,14 +27,35 @@
 
     }
 ?>
-<form method="POST">
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" href="../assets/css/style.css">
+    </head>
 
-Email:<br>
-<input type="email" name="email"><br>
+    <body>
+        <div class="form-container">
 
-Password:<br>
-<input type="password" name="password"><br>
+            <h2>Login</h2>
 
-<button type="submit">Login</button>
+            <form method="POST">
 
-</form>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+    
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+    
+                <button type="submit" class="btn btn-primary">Login</button>
+
+            </form>
+
+        </div>
+
+    </body>
+</html>
