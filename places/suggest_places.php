@@ -78,6 +78,6 @@ mysqli_close($conn);
     <?php endif; ?>
 
     <br>
-    <a href="../user/dashboard.php">← Back to Dashboard</a>
+    <a href="../user/dashboard.php">Back to Dashboard</a>
 </body>
 </html>
