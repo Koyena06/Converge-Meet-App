@@ -8,7 +8,7 @@
         $email=$_POST["email"];
         $password=$_POST["password"];
 
-        $hashed_password = password_hash(password, PASSWORD_DEFAULT); //hashing of passwords- converts a plain password into an encrypted version
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT); //hashing of passwords- converts a plain password into an encrypted version
 
         $sql ="INSERT INTO users (name, email, password) VALUES ('$name','$email','$hashed_password')";
 
