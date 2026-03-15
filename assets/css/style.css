@@ -1,16 +1,14 @@
-/*global variable to remove default browser spacing*/
+
 *{
-	margin:0;
-	padding:0;
-	box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
-/*overall font, background color, and main text color for the entire website*/
 body{
     font-family: Georgia, "Times New Roman", serif;
     background-color:#FAFAFA;
     color:#2D3436;
 }
-/*horizontal navigation bar using flexbox, spacing between items and a light shadow*/
 .navbar{
     display:flex;
     justify-content:space-between;
@@ -19,30 +17,31 @@ body{
     background:white;
     box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
-/*styles the website logo*/
+.event-card{
+    margin-bottom:20px;
+}
+
 .logo{
     font-size:22px;
     font-weight:bold;
     color:#FF6B6B;
 }
-/* */
 
-/*style the nav menu */
 .nav-links a{
     text-decoration:none;
     margin-left:25px;
     color:#2D3436;
     font-weight:500;
 }
-/*changes link color when hovered over it*/
+
 .nav-links a:hover{
     color:#FF6B6B;
 }
-/*homepage styling, alignment and spacing*/
 .hero{
     text-align:center;
     padding:120px 20px;
 }
+
 .hero h1{
     font-size:48px;
     margin-bottom:20px;
@@ -53,7 +52,6 @@ body{
     margin-bottom:30px;
     color:#555;
 }
-/*button styling*/
 .btn{
     padding:12px 24px;
     border:none;
@@ -81,8 +79,6 @@ body{
 .btn-secondary:hover{
     background:#ffcf1a;
 }
-
-/* form styling */
 .form-container{
     width:400px;
     margin:80px auto;
@@ -105,7 +101,6 @@ body{
     display:block;
     margin-bottom:5px;
 }
-
 .form-group input{
     width:100%;
     padding:10px;
@@ -117,7 +112,45 @@ body{
     outline:none;
     border-color:#FF6B6B;
 }
-/*dashboard layout*/
+
+.form-group select{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+    background:white;
+    color:#2D3436;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.form-group select:focus{
+    outline:none;
+    border-color:#FF6B6B;
+    box-shadow:0 0 5px rgba(255,107,107,0.3);
+}
+
+.form-group textarea{
+    width:100%;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    resize:none;
+    font-family:inherit;
+}
+
+.form-group textarea:focus{
+    outline:none;
+    border-color:#FF6B6B;
+}
+.success{
+    color:#27ae60;
+    font-weight:500;
+    margin-bottom:15px;
+}
+
 .dashboard{
     padding:40px 80px;
 }
@@ -125,7 +158,7 @@ body{
 .dashboard h2{
     margin-bottom:30px;
 }
-/* CARD stylinh used for places, events, friends*/
+
 .card{
     background:white;
     padding:20px;
@@ -146,7 +179,6 @@ body{
     font-size:14px;
     margin-bottom:15px;
 }
-/*styling for small labels */
 .badge{
     display:inline-block;
     padding:5px 10px;
@@ -155,7 +187,6 @@ body{
     font-size:12px;
     font-weight:bold;
 }
-/* centered card layout for user profile page */
 .profile{
     max-width:700px;
     margin:50px auto;
@@ -168,7 +199,6 @@ body{
 .profile h2{
     margin-bottom:20px;
 }
-/*styling of interest tags*/
 .interests{
     display:flex;
     flex-wrap:wrap;
@@ -181,7 +211,6 @@ body{
     background:#FFD93D;
     font-size:14px;
 }
-/*card layout for events*/
 .event-card{
     background:white;
     padding:20px;
@@ -197,7 +226,7 @@ body{
     font-size:14px;
     margin-bottom:10px;
 }
-/*styling friend-lsit*/
+
 .friend-list{
     max-width:600px;
     margin:30px auto;
@@ -212,7 +241,11 @@ body{
     border-radius:8px;
     box-shadow:0 3px 8px rgba(0,0,0,0.05);
 }
-/*styling for a centereed footer */
+
+h3{
+    margin-top:25px;
+}
+
 .footer{
     text-align:center;
     padding:25px;
@@ -220,19 +253,3 @@ body{
     background:white;
     color:#777;
 }
-/*styling for smaller screens-reduce paddiing,adjust heading,adjust width*/
-/*@media(max-width:768px){
-    .navbar{
-        padding:20px;
-    }
-    .dashboard{
-        padding:20px;
-    }
-    .hero h1{
-        font-size:36px;
-    }
-    .form-container{
-        width:90%;
-    }
-}
-*/

@@ -1,7 +1,7 @@
 <?php
     $host="localhost";
     $user="root";
-    $password="";
+    $password="kalidas@123";
     $database="meetup_db";
 
     //create connection 

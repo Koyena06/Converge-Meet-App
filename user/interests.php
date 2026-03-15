@@ -48,33 +48,52 @@
         
             <?php
             if(isset($message)){
-                echo "<p>".$message."</p>";
+                echo "<p class='success'>".$message."</p>";
             }
             ?>
         
             <form method="POST">
-            
-                <div class="form-group">
-                
-                    <label>Choose Interest</label>
-                
-                    <select name="interest">
-                
-                        <?php
-                        while($row=$result->fetch_assoc()){
-                            echo "<option value='".$row['id']."'>".$row['interest_name']."</option>";
-                        }
-                        ?>
-                
-                    </select>
-                
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Add Interest</button>
-            
-            </form>
-        
-        </div>
+
+    <div class="form-group">
+
+        <label>Choose Interest</label>
+
+        <select name="interest">
+
+            <?php
+            while($row=$result->fetch_assoc()){
+                echo "<option value='".$row['id']."'>".$row['interest_name']."</option>";
+            }
+            ?>
+
+        </select>
+
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Interest</button>
+
+</form>
+
+
+<h3>Your Interests</h3>
+
+<div class="interests">
+
+<?php
+$my = $conn->query("
+SELECT interest_name 
+FROM interests
+JOIN user_interests 
+ON interests.id = user_interests.interest_id
+WHERE user_interests.user_id = '$user_id'
+");
+
+while($i = $my->fetch_assoc()){
+    echo "<span class='interest-tag'>".$i["interest_name"]."</span>";
+}
+?>
+
+</div>
     
     </body>
 </html>

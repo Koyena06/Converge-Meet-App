@@ -1,7 +1,4 @@
 <?php
-
-    /*allows user to create meetup events*/
-
     session_start();
     include("../config/db.php");
 

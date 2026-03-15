@@ -7,7 +7,7 @@ if(session_status() === PHP_SESSION_NONE){
 <div class="navbar">
 
     <div class="logo">
-        <a href="/meetup-app/index.php">Meetup</a>
+        <a href="index.php">Converge</a>
     </div>
 
     <div class="nav-links">

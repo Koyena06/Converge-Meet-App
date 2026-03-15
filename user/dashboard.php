@@ -19,7 +19,9 @@
     
         <div class="navbar">
         
-            <div class="logo">Converge</div>
+            <div class="logo">
+                <a href="/meetup-app/index.php">Converge</a>
+            </div>
             
                 <div class="nav-links">
                     <a href="profile.php">Profile</a>
@@ -56,7 +58,7 @@
                     <div class="card">
                         <h3>View Events</h3>
                         <p>See upcoming meetups and join events.</p>
-                        <a href="../events/view_event.php" class="btn btn-primary">View</a>
+                        <a href="../events/view_events.php" class="btn btn-primary">View</a>
                     </div>
                 </div>
         
