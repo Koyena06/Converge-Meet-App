@@ -3,7 +3,7 @@
     If session does not exist user will be redirected to the main page*/
     session_start();
     if(!isset($_SESSION["user_id"])){
-        header("Location: ../auth/login/php");
+        header("Location: ../auth/login.php");
         exit();
     }
 ?>
