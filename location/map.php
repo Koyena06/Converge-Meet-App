@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../config/db.php");
+require_once '../config/db.php';
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: ../auth/login.php");
@@ -9,173 +9,147 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-// Fetch user's friends
-$sql = "SELECT u.id, u.name, l.latitude, l.longitude, l.timestamp
-        FROM friends f
-        JOIN users u ON (f.friend_id = u.id OR f.user_id = u.id) AND u.id != '$user_id'
-        JOIN locations l ON l.user_id = u.id
-        WHERE (f.user_id = '$user_id' OR f.friend_id = '$user_id') AND f.status = 'accepted'
-        ORDER BY l.timestamp DESC";
-$result = $conn->query($sql);
+// Check if we are focusing on a specific friend from the Events or Friends page
+$focus_friend_id = isset($_GET['friend_id']) ? (int)$_GET['friend_id'] : null;
 
-$friends = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $friends[] = $row;
-    }
-}
+// Fetch user's own last known location from the RENAMED table: user_location
+$stmt = $conn->prepare("SELECT latitude, longitude FROM user_location WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user_location = $stmt->get_result()->fetch_assoc();
 
-// If no friends, use dummy locations
-if (empty($friends)) {
-    $friends = [
-        ['id' => 'dummy1', 'name' => 'Dummy Friend 1', 'latitude' => 40.7128, 'longitude' => -74.0060, 'timestamp' => date('Y-m-d H:i:s')],
-        ['id' => 'dummy2', 'name' => 'Dummy Friend 2', 'latitude' => 34.0522, 'longitude' => -118.2437, 'timestamp' => date('Y-m-d H:i:s')],
-        ['id' => 'dummy3', 'name' => 'Dummy Friend 3', 'latitude' => 41.8781, 'longitude' => -87.6298, 'timestamp' => date('Y-m-d H:i:s')]
-    ];
-}
-
-// Fetch user's own location
-$sql_user = "SELECT latitude, longitude FROM locations WHERE user_id = '$user_id' ORDER BY timestamp DESC LIMIT 1";
-$result_user = $conn->query($sql_user);
-$user_location = $result_user->fetch_assoc();
+// Default coordinates (Bhubaneswar center) if no location is found
+$start_lat = $user_location['latitude'] ?? 20.2961; 
+$start_lng = $user_location['longitude'] ?? 85.8245;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Map - Converge Meet App</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Live Map | Converge</title>
+    <link rel="stylesheet" href="../style1.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        .map-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
+        #map { 
+            height: 600px; 
+            width: 100%; 
+            border-radius: 15px; 
+            z-index: 1; 
+            border: 2px solid #eee;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
-        .map-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            overflow: hidden;
+        .map-card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
         }
-        .map-header {
-            padding: 20px;
-            background: #FF6B6B;
-            color: white;
-            text-align: center;
-        }
-        .map-header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        #map {
-            height: 600px;
-            width: 100%;
-        }
-        .map-info {
-            padding: 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
-        }
-        .map-info p {
-            margin: 0;
-            color: #555;
-        }
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        @media (max-width: 768px) {
-            .map-container {
-                margin: 20px;
-                padding: 10px;
-            }
-            #map {
-                height: 400px;
-            }
+        /* Custom Blue Dot for the Logged-in User */
+        .user-marker { 
+            background: #0984e3; 
+            width: 14px; 
+            height: 14px; 
+            border-radius: 50%; 
+            border: 3px solid white; 
+            box-shadow: 0 0 8px rgba(0,0,0,0.4); 
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">Converge Meet</div>
-        <div class="nav-links">
-            <a href="../user/dashboard.php">Dashboard</a>
-            <a href="../friends/friends.php">Friends</a>
-            <a href="../events/view_events.php">Events</a>
-            <a href="../auth/logout.php">Logout</a>
-        </div>
-    </nav>
 
-    <div class="map-container">
-        <div class="map-card">
-            <div class="map-header">
-                <h1>Real-Time Map</h1>
-            </div>
-            <div id="map"></div>
-            <div class="map-info">
-                <p><strong>Your location:</strong> Tracking in real-time • <strong>Friends:</strong> Locations update every 10 seconds</p>
-            </div>
-        </div>
+<?php require_once '../includes/header.php'; ?>
+
+<main class="dashboard-page">
+    <div class="hero-content" style="text-align: center; margin-bottom: 30px;">
+        <h1 class="page-title">Live <em>Network</em></h1>
+        <p class="page-subtitle">
+            <?php echo $focus_friend_id ? "Finding your friend on the map..." : "Viewing all active connections in your area."; ?>
+        </p>
     </div>
 
-    <script>
-        var map = L.map('map').setView([<?php echo $user_location ? $user_location['latitude'] : 0; ?>, <?php echo $user_location ? $user_location['longitude'] : 0; ?>], 13);
+    <div class="map-card">
+        <div id="map"></div>
+        <div style="margin-top: 15px; font-size: 0.85rem; color: #666; display: flex; justify-content: space-between; align-items: center;">
+            <span><span style="color:#0984e3; font-size:1.2rem;">●</span> Your Location</span>
+            <span><span style="color:#d63031; font-size:1.2rem;">●</span> Friends</span>
+            <span style="font-style: italic;">Auto-refreshing every 10s</span>
+        </div>
+    </div>
+</main>
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        var markers = {};
+<script>
+    // 1. Initialize the Map
+    var map = L.map('map').setView([<?= $start_lat ?>, <?= $start_lng ?>], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-        // Add user's marker
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
+    var markers = {};
+    var focusId = <?= json_encode($focus_friend_id) ?>;
 
-                if (markers['user']) {
-                    map.removeLayer(markers['user']);
-                }
+    // 2. Track Browser Geolocation (Real-Time)
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
 
-                markers['user'] = L.marker([lat, lng]).addTo(map)
-                    .bindPopup('You are here').openPopup();
+            // Remove old user marker
+            if (markers['user']) { map.removeLayer(markers['user']); }
+            
+            // Create custom blue icon
+            var userIcon = L.divIcon({className: 'user-marker'});
+            markers['user'] = L.marker([lat, lng], {icon: userIcon}).addTo(map)
+                .bindPopup('<b>You</b>');
 
-                // Update user's location in database
-                fetch('update_location.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'latitude=' + lat + '&longitude=' + lng
+            // If not focusing on a specific friend, center on user once
+            if (!focusId && !markers['initial_center']) {
+                map.setView([lat, lng], 13);
+                markers['initial_center'] = true;
+            }
+
+            // Update database via update_location.php
+            var fd = new FormData();
+            fd.append('latitude', lat);
+            fd.append('longitude', lng);
+            fetch('update_location.php', { method: 'POST', body: fd });
+        }, function(error) {
+            console.error("Geolocation error: ", error);
+        }, { enableHighAccuracy: true });
+    }
+
+    // 3. Fetch Friends from the Server
+    function fetchFriends() {
+        fetch('get_friends_locations.php')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(friend => {
+                    // Remove existing marker for this friend to avoid duplicates
+                    if (markers[friend.id]) { map.removeLayer(markers[friend.id]); }
+
+                    // Create friend marker (Default Red Leaflet marker)
+                    markers[friend.id] = L.marker([friend.latitude, friend.longitude]).addTo(map)
+                        .bindPopup('<b>' + friend.name + '</b><br>Last seen: ' + friend.last_seen);
+
+                    // If we clicked "View on Map" for this person, fly to them
+                    if (focusId && friend.id == focusId) {
+                        map.flyTo([friend.latitude, friend.longitude], 15, { duration: 2 });
+                        markers[friend.id].openPopup();
+                        focusId = null; // Clear focus after found
+                    }
                 });
-            });
-        }
+            })
+            .catch(err => console.error("Error fetching friends: ", err));
+    }
 
-        // Function to update friends' locations
-        function updateFriendsLocations() {
-            fetch('get_friends_locations.php')
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(friend => {
-                        if (markers[friend.id]) {
-                            map.removeLayer(markers[friend.id]);
-                        }
-                        markers[friend.id] = L.marker([friend.latitude, friend.longitude]).addTo(map)
-                            .bindPopup(friend.name);
-                    });
-                });
-        }
+    // Initial load and periodic refresh
+    fetchFriends();
+    setInterval(fetchFriends, 10000);
+</script>
 
-        // Initial load
-        updateFriendsLocations();
-
-        // Update every 10 seconds
-        setInterval(updateFriendsLocations, 10000);
-    </script>
+<?php require_once '../includes/footer.php'; ?>
 </body>
 </html>

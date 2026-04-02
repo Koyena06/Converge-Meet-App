@@ -1,16 +1,21 @@
 <?php
 session_start();
-include("../config/db.php");
+require_once '../config/db.php';
 
-if (!isset($_SESSION["user_id"])) {
-    http_response_code(403);
+if (!isset($_SESSION["user_id"]) || !isset($_POST['latitude'])) {
     exit();
 }
 
 $user_id = $_SESSION["user_id"];
-$latitude = $_POST['latitude'];
-$longitude = $_POST['longitude'];
+$lat = $_POST['latitude'];
+$lng = $_POST['longitude'];
 
-$sql = "INSERT INTO locations (user_id, latitude, longitude, timestamp) VALUES ('$user_id', '$latitude', '$longitude', NOW())";
-$conn->query($sql);
+// Update if exists, insert if not (Assuming user_id is UNIQUE or PRIMARY in locations)
+$sql = "INSERT INTO locations (user_id, latitude, longitude, updated_at) 
+        VALUES (?, ?, ?, NOW()) 
+        ON DUPLICATE KEY UPDATE latitude = VALUES(latitude), longitude = VALUES(longitude), updated_at = NOW()";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("idd", $user_id, $lat, $lng);
+$stmt->execute();
 ?>

@@ -1,7 +1,8 @@
+
 <?php
     $host="localhost";
     $user="root";
-    $password="kalidas@123";
+    $password="";
     $database="meetup_db";
 
     //create connection 
@@ -11,4 +12,5 @@
     if($conn->connect_error){
         die("Database Connection Failed: ". $conn->connect_error);
     }
+    //database connection complete
 ?>
