@@ -72,6 +72,14 @@ CREATE TABLE `user_interests` (
   PRIMARY KEY (`user_id`,`interest_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE event_participants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    user_id INT NOT NULL,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_participant (event_id, user_id)
+);
+
 -- 2. DATA DUMPING
 -- --------------------------------------------------------
 
